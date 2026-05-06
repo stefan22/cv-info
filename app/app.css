@@ -3,8 +3,9 @@
 @import "tw-animate-css";
 
 @theme {
-  --font-sans: "Mona Sans", ui-sans-serif, system-ui, sans-serif,
-  "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-sans:
+    "Mona Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --color-dark-200: #475467;
   --color-light-blue-100: #c1d3f81a;
   --color-light-blue-200: #a7bff14d;
@@ -27,11 +28,11 @@ main {
   @apply min-h-screen pt-10;
 }
 h1 {
-  @apply text-5xl  text-gradient leading-tight tracking-[-2px] font-semibold;
+  @apply text-4xl  text-gradient leading-tight tracking-[-2px] font-semibold;
 }
 
 h2 {
-  @apply text-3xl text-dark-200;
+  @apply text-xl text-dark-200;
 }
 
 label {
@@ -57,7 +58,7 @@ form {
     @apply bg-linear-to-b from-light-blue-100 to-light-blue-200 p-4 rounded-2xl;
   }
   .primary-button {
-    @apply primary-gradient text-white rounded-full px-4 py-2 cursor-pointer w-full;
+    @apply primary-gradient text-white rounded-full py-2 px-4 cursor-pointer w-full;
   }
   .cv-nav {
     @apply flex flex-row justify-between items-center p-4 border-b border-gray-200;
@@ -75,10 +76,14 @@ form {
     @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-150 max-md:w-full text-3xl font-semibold text-white;
   }
   .main-section {
-    @apply flex flex-col items-center gap-8 pt-12 mx-15 pb-5;
+    @apply flex flex-col items-center gap-8 pt-4 mx-12 pb-5;
+  }
+
+  .main-sub-section {
+    @apply flex flex-col items-center gap-8 pt-4 mx-4 pb-5;
   }
   .page-heading {
-    @apply flex flex-col items-center gap-8 max-w-4xl text-center;
+    @apply flex flex-col items-center gap-4 max-w-4xl text-center;
   }
   .cv-section {
     @apply flex flex-wrap max-lg:flex-col gap-6 items-start  w-full max-w-462.5 justify-evenly;
@@ -89,7 +94,7 @@ form {
   }
 
   .cv-card-header {
-    @apply flex flex-row gap-2 justify-between min-h-27.5 max-sm:flex-col items-center max-md:justify-center max-md:items-center;
+    @apply flex flex-row gap-2 justify-between min-h-27.5 py-4 max-sm:flex-col items-center max-md:justify-center max-md:items-center;
   }
 
   .feedback-section {
@@ -97,7 +102,7 @@ form {
   }
 
   .navbar {
-    @apply flex flex-row justify-between items-center bg-white rounded-full p-4 w-full px-10 max-w-300 mx-auto;
+    @apply flex flex-row justify-between items-center bg-white rounded-full py-4 w-full px-6 max-w-300 mx-auto;
   }
 
   .score-badge {

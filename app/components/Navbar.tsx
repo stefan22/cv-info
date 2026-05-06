@@ -4,7 +4,7 @@ const Navbar = () => {
     return (
         <nav className="navbar">
             <Link to="/">
-                <p className="text-2xl font-bold text-gradient">Cake®Stack</p>
+                <p className="text-lg font-bold text-gradient">Cake®Stack</p>
             </Link>
             <Link to="/upload" className="primary-button w-fit">
                 Upload CV

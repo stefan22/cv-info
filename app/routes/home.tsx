@@ -16,12 +16,13 @@ export default function Home() {
         <Navbar />
 
         <section className="main-section">
-          <div className="page-heading py-16">
+          <div className="page-heading py-8">
             <h1>Track Your Applications & CV Ratings</h1>
               <h2>Review your submissions and check AI-powered feedback.</h2>
           </div>
         </section>
 
+          <section className="main-sub-section">
           {cvs.length > 0 && (
               <div className="cv-section">
                   {cvs.map((cv,i) => (
@@ -29,7 +30,7 @@ export default function Home() {
                   ))}
               </div>
           )}
-
+        </section>
       </main>
         )
 }
