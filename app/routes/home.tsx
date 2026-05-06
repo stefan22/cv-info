@@ -1,5 +1,7 @@
 import type { Route } from "./+types/home";
 import Navbar from "~/components/Navbar";
+import CVCard from "~/components/CVCard";
+import {cvs} from "../../constants";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -15,9 +17,19 @@ export default function Home() {
 
         <section className="main-section">
           <div className="page-heading py-16">
-            <h1>Track Your Applications & Resume Ratings</h1>
+            <h1>Track Your Applications & CV Ratings</h1>
+              <h2>Review your submissions and check AI-powered feedback.</h2>
           </div>
         </section>
+
+          {cvs.length > 0 && (
+              <div className="cv-section">
+                  {cvs.map((cv,i) => (
+                      <CVCard key={cv.id} cv={cv} />
+                  ))}
+              </div>
+          )}
+
       </main>
         )
 }

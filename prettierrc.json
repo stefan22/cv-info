@@ -1,0 +1,30 @@
+{
+  "trailingComma": "es5",
+  "tabWidth": 2,
+  "semi": true,
+  "singleQuote": true,
+  "bracketSameLine": true,
+  "bracketSpacing": true,
+  "endOfLine": "lf",
+  "arrowParens": "always",
+  "jsxSingleQuote": false,
+  "experimentalTernaries": true,
+  "overrides": [
+    {
+      "printWidth": 120,
+      "proseWrap": "preserve",
+      "embeddedLanguageFormatting": "auto",
+      "htmlWhitespaceSensitivity": "ignore",
+      "filepath": "string",
+      "insertPragma": true,
+      "files": [
+        "**/*.js",
+        "**/.ts",
+        "**/*.jsx",
+        "**/.tsx",
+        "**/.json",
+        "**/.mjs"
+      ]
+    }
+  ]
+}
