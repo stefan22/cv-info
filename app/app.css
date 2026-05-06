@@ -25,7 +25,7 @@ body {
 }
 
 main {
-  @apply min-h-screen pt-10;
+  @apply min-h-screen pt-10 w-full;
 }
 h1 {
   @apply text-4xl  text-gradient leading-tight tracking-[-2px] font-semibold;
@@ -73,7 +73,7 @@ form {
     @apply flex flex-row items-center gap-2 border border-gray-200 rounded-lg p-2 shadow-sm;
   }
   .auth-button {
-    @apply primary-gradient rounded-full py-4 px-8 cursor-pointer w-150 max-md:w-full text-3xl font-semibold text-white;
+    @apply primary-gradient rounded-full px-8 py-2 cursor-pointer text-xl font-semibold text-white;
   }
   .main-section {
     @apply flex flex-col items-center gap-8 pt-4 mx-12 pb-5;

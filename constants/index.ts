@@ -91,12 +91,12 @@ export const cvs: CV[] = [
   },
   {
     id: "4",
-    companyName: "Google",
+    companyName: "Facebook",
     jobTitle: "Frontend Developer",
     imagePath: "/images/cv_01.png",
     cvPath: "/cvs/cv-1.pdf",
     feedback: {
-      overallScore: 85,
+      overallScore: 75,
       ATS: {
         score: 90,
         tips: [],
@@ -121,12 +121,12 @@ export const cvs: CV[] = [
   },
   {
     id: "5",
-    companyName: "JP Morgan",
+    companyName: "Proton",
     jobTitle: "Cloud Engineer",
     imagePath: "/images/cv_02.png",
     cvPath: "/cvs/cv-2.pdf",
     feedback: {
-      overallScore: 55,
+      overallScore: 88,
       ATS: {
         score: 90,
         tips: [],
@@ -151,8 +151,8 @@ export const cvs: CV[] = [
   },
   {
     id: "6",
-    companyName: "Apple",
-    jobTitle: "iOS Developer",
+    companyName: "Open AI",
+    jobTitle: "Front-end Developer",
     imagePath: "/images/cv_03.png",
     cvPath: "/cvs/cv-3.pdf",
     feedback: {
