@@ -2,6 +2,10 @@ import type { Route } from "./+types/home";
 import Navbar from "~/components/Navbar";
 import CVCard from "~/components/CVCard";
 import {cvs} from "../../constants";
+import {usePuterStore} from "~/lib/puter";
+import {useLocation, useNavigate} from "react-router";
+import {useEffect} from "react";
+import MainNavbar from "~/components/MainNavbar";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -11,8 +15,18 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export default function Home() {
+    const { isLoading, auth } = usePuterStore();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!auth.isAuthenticated) navigate('/');
+
+    }, [auth.isAuthenticated]);
   return (
       <main className="bg-[url('/images/bg-main.svg')] bg-cover">
+
+          <MainNavbar />
+
         <Navbar />
 
         <section className="main-section">

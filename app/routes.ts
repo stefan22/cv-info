@@ -1,3 +1,18 @@
-import { type RouteConfig, index } from "@react-router/dev/routes";
+import {type RouteConfig, index, route} from "@react-router/dev/routes";
 
-export default [index("routes/home.tsx")] satisfies RouteConfig;
+export const meta = () => ([
+    {title: 'Cake®Stack | Auth'},
+    {name: 'description', content: 'Log into your cake page'},
+])
+
+export default [
+    index("routes/home.tsx"),
+    route('/auth', 'routes/auth.tsx'),
+    route('/upload', 'routes/upload.tsx'),
+
+] satisfies RouteConfig;
+
+
+
+
+
