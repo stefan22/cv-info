@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import {useEffect} from 'react';
 import {
   isRouteErrorResponse,
   Links,
@@ -10,6 +10,7 @@ import {
 
 import type { Route } from "./+types/root";
 import "./app.css";
+import MainNavbar from "~/components/MainNavbar";
 import {usePuterStore} from "~/lib/puter";
 
 export const links: Route.LinksFunction = () => [
@@ -53,7 +54,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  return (
+    <>
+      <MainNavbar />
+      <div className="relative bg-[url('/images/bg-main.svg')] bg-cover bg-fixed">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-white via-white/70 to-transparent"
+        />
+        <Outlet />
+      </div>
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

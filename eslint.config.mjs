@@ -55,6 +55,7 @@ export default defineConfig([
     globalIgnores([
         "out/**",
         "build/**",
-        "node_modules/**"
+        "node_modules/**",
+        ".react-router/**",
     ]),
 ]);

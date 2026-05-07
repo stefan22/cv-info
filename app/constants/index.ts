@@ -4,7 +4,7 @@ export const cvs: CV[] = [
     companyName: "Google",
     jobTitle: "Frontend Developer",
     imagePath: "/images/cv_01.png",
-    cvPath: "/cvs/cv-1.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 85,
       ATS: {
@@ -34,7 +34,7 @@ export const cvs: CV[] = [
     companyName: "JP Morgan",
     jobTitle: "Cloud Engineer",
     imagePath: "/images/cv_02.png",
-    cvPath: "/cvs/cv-2.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 55,
       ATS: {
@@ -64,7 +64,7 @@ export const cvs: CV[] = [
     companyName: "Apple",
     jobTitle: "iOS Developer",
     imagePath: "/images/cv_03.png",
-    cvPath: "/cvs/cv-3.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 75,
       ATS: {
@@ -94,7 +94,7 @@ export const cvs: CV[] = [
     companyName: "Facebook",
     jobTitle: "Frontend Developer",
     imagePath: "/images/cv_01.png",
-    cvPath: "/cvs/cv-1.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 75,
       ATS: {
@@ -124,7 +124,7 @@ export const cvs: CV[] = [
     companyName: "Proton",
     jobTitle: "Cloud Engineer",
     imagePath: "/images/cv_02.png",
-    cvPath: "/cvs/cv-2.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 88,
       ATS: {
@@ -154,7 +154,7 @@ export const cvs: CV[] = [
     companyName: "Open AI",
     jobTitle: "Front-end Developer",
     imagePath: "/images/cv_03.png",
-    cvPath: "/cvs/cv-3.pdf",
+    cvPath: "",
     feedback: {
       overallScore: 75,
       ATS: {
@@ -243,5 +243,5 @@ export const prepareInstructions = ({
       The job description is: ${jobDescription}
       Provide the feedback using the following format:
       ${AIResponseFormat}
-      Return the analysis as an JSON object, without any other text and without the backticks.
+      Return the analysis as a JSON object, without any other text and without the backticks.
       Do not include any other text or comments.`;
