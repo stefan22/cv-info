@@ -10,10 +10,10 @@ const ScoreBadge = ({ score }: { score: number }) => {
   return (
     <div
       className={cn(
-        'flex flex-row gap-1 items-center px-2 py-0.5 rounded-[96px]',
-        score > 69 ? 'bg-badge-green'
-        : score > 39 ? 'bg-badge-yellow'
-        : 'bg-badge-red'
+        'flex flex-row gap-1 items-center px-2.5 py-1 rounded-[96px] border',
+        score > 69 ? 'bg-sky-100 border-sky-300'
+        : score > 39 ? 'bg-amber-100 border-amber-300'
+        : 'bg-rose-100 border-rose-300'
       )}>
       <img
         src={score > 69 ? '/icons/check.svg' : '/icons/warning.svg'}
@@ -23,9 +23,9 @@ const ScoreBadge = ({ score }: { score: number }) => {
       <p
         className={cn(
           'text-sm font-medium',
-          score > 69 ? 'text-badge-green-text'
-          : score > 39 ? 'text-badge-yellow-text'
-          : 'text-badge-red-text'
+          score > 69 ? 'text-sky-900'
+          : score > 39 ? 'text-amber-900'
+          : 'text-rose-900'
         )}>
         {score}/100
       </p>
@@ -42,7 +42,7 @@ const CategoryHeader = ({
 }) => {
   return (
     <div className="flex flex-row gap-4 items-center py-2">
-      <p className="text-2xl font-semibold">{title}</p>
+      <p className="text-base font-semibold text-gray-800">{title}</p>
       <ScoreBadge score={categoryScore} />
     </div>
   );
@@ -65,7 +65,14 @@ const CategoryContent = ({
               alt="score"
               className="size-5"
             />
-            <p className="text-xl text-gray-500 ">{tip.tip}</p>
+            <p
+              className={
+                tip.type === 'good' ?
+                  'text-sm font-medium text-emerald-800'
+                : 'text-xs font-medium leading-5 text-[#FFD400] bg-slate-800/90 px-1.5 py-0.5 rounded-md'
+              }>
+              {tip.tip}
+            </p>
           </div>
         ))}
       </div>
@@ -76,8 +83,9 @@ const CategoryContent = ({
             className={cn(
               'flex flex-col gap-2 rounded-2xl p-4',
               tip.type === 'good' ?
-                'bg-green-50 border border-green-200 text-green-700'
-              : 'bg-yellow-50 border border-yellow-200 text-yellow-700'
+                'bg-gradient-to-b from-emerald-100 via-emerald-50/40 to-slate-50 border border-emerald-200 text-slate-950'
+              :
+                'bg-gradient-to-b from-amber-100 via-amber-50/40 to-slate-50 border border-amber-200 text-slate-950'
             )}>
             <div className="flex flex-row gap-2 items-center">
               <img
@@ -89,9 +97,14 @@ const CategoryContent = ({
                 alt="score"
                 className="size-5"
               />
-              <p className="text-xl font-semibold">{tip.tip}</p>
+              <p className="text-base font-semibold">{tip.tip}</p>
             </div>
-            <p>{tip.explanation}</p>
+            <p
+              className={
+                tip.type === 'good' ? 'text-sm text-slate-700' : 'text-sm'
+              }>
+              {tip.explanation}
+            </p>
           </div>
         ))}
       </div>

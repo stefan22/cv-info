@@ -57,6 +57,9 @@ form {
   .gradient-border {
     @apply bg-linear-to-b from-light-blue-100 to-light-blue-200 p-4 rounded-2xl;
   }
+  .cv-screenshot-frame {
+    @apply bg-linear-to-b from-light-blue-100 to-light-blue-200 p-2 rounded-2xl;
+  }
   .primary-button {
     @apply primary-gradient text-white rounded-full py-2 px-4 cursor-pointer w-full;
   }

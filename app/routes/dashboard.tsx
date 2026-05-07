@@ -13,7 +13,7 @@ export const meta = () => [
 ];
 
 const Dashboard = () => {
-  const { auth, isLoading, kv } = usePuterStore();
+  const { auth, isLoading, kv, fs } = usePuterStore();
   const navigate = useNavigate();
   const [cvs, setCvs] = useState<CV[]>([]);
   const [isFetching, setIsFetching] = useState(true);
@@ -28,6 +28,8 @@ const Dashboard = () => {
     if (!auth.isAuthenticated) {
       return;
     }
+
+    const objectUrls: string[] = [];
 
     const loadCVs = async () => {
       setIsFetching(true);
@@ -69,24 +71,40 @@ const Dashboard = () => {
         }
       }
 
-      const normalized = items
-        .map((item) => {
-          let parsedFeedback: Feedback | null = null;
-          if (typeof item.feedback === "string") {
-            try {
-              parsedFeedback = JSON.parse(item.feedback) as Feedback;
-            } catch {
-              parsedFeedback = null;
+      const normalized = (
+        await Promise.all(
+          items.map(async (item) => {
+            let parsedFeedback: Feedback | null = null;
+            if (typeof item.feedback === "string") {
+              try {
+                parsedFeedback = JSON.parse(item.feedback) as Feedback;
+              } catch {
+                parsedFeedback = null;
+              }
+            } else {
+              parsedFeedback = item.feedback;
             }
-          } else {
-            parsedFeedback = item.feedback;
-          }
 
-          return {
-            ...item,
-            imagePath: item.imagePath ?? "",
-            feedback: parsedFeedback,
-          };
+            let previewImagePath = item.imagePath ?? "";
+            if (item.imagePath) {
+              const imageBlob = await fs.read(item.imagePath);
+              if (imageBlob) {
+                const url = URL.createObjectURL(imageBlob);
+                objectUrls.push(url);
+                previewImagePath = url;
+              }
+            }
+
+            return {
+              ...item,
+              imagePath: previewImagePath,
+              feedback: parsedFeedback,
+            };
+          })
+        )
+      )
+        .map((item) => {
+          return item;
         })
         .filter((cv): cv is CV => typeof cv.feedback?.overallScore === "number")
         .sort((a, b) => b.id.localeCompare(a.id));
@@ -96,7 +114,10 @@ const Dashboard = () => {
     };
 
     void loadCVs();
-  }, [auth.isAuthenticated, kv]);
+    return () => {
+      objectUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [auth.isAuthenticated, kv, fs]);
 
   if (isLoading || !auth.isAuthenticated) {
     return (
@@ -112,8 +133,8 @@ const Dashboard = () => {
     <main className="relative">
       <section className="w-full max-w-[88rem] mx-auto px-6 pt-20 pb-12">
         <div className="page-heading !max-w-none !items-start !text-left">
-          <h1>Your CV Dashboard</h1>
-          <h2>Revisit your submitted CVs and open any detailed review.</h2>
+          <h1>Your CV Scores</h1>
+          <h2>Click on a CV to review recommendations.</h2>
         </div>
 
         {isFetching ? (

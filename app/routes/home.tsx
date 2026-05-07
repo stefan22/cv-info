@@ -6,7 +6,10 @@ import {cvs} from "~/constants";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Cake®Stack | Dashboard" },
-    { name: "description", content: "Track your CV applications and feedback." },
+    {
+      name: "description",
+      content: "Get a free ATS-style CV review, scores, and improvement tips tailored to your next role.",
+    },
   ];
 }
 
@@ -15,14 +18,14 @@ export default function Home() {
     <main className="relative">
       <section className="w-full max-w-[88rem] mx-auto px-6 pt-20 pb-12">
         <div className="page-heading !max-w-none !items-start !text-left">
-          <h1>Track Your Applications & CV Ratings</h1>
-          <h2>Review your submissions and check AI-powered feedback.</h2>
+          <h1>Free CV Insights, Powered by AI</h1>
+          <h2>See strengths, gaps, and next steps tailored to your CV in seconds</h2>
         </div>
 
         {cvs.length > 0 && (
           <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
             {cvs.slice(0, 3).map((cv) => (
-              <CVCard key={cv.id} cv={cv} />
+              <CVCard key={cv.id} cv={cv} to="/upload" />
             ))}
 
             <div className="col-span-full my-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
@@ -43,7 +46,7 @@ export default function Home() {
             </div>
 
             {cvs.slice(3).map((cv) => (
-              <CVCard key={cv.id} cv={cv} />
+              <CVCard key={cv.id} cv={cv} to="/upload" />
             ))}
           </div>
         )}
