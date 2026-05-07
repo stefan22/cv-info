@@ -1,11 +1,17 @@
 /// <reference types="vitest/config" />
 
 import { reactRouter } from "@react-router/dev/vite";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 
+const isVitest = process.env.VITEST === "true";
+
 export default defineConfig({
-  plugins: [tailwindcss(), reactRouter()],
+  plugins: [
+    tailwindcss(),
+    ...(isVitest ? [react()] : [reactRouter()]),
+  ],
   resolve: {
     tsconfigPaths: true,
   },
