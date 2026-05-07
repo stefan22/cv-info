@@ -22,6 +22,14 @@ const MainNavbar = () => {
         </Link>
 
         <div className="flex items-center gap-3">
+          {auth.isAuthenticated && (
+            <Link
+              to="/dashboard"
+              className="text-sm font-semibold text-gradient hover:opacity-80 transition px-3 py-1.5"
+            >
+              Dashboard
+            </Link>
+          )}
           <Link
             to="/upload"
             className="text-sm font-semibold text-gradient hover:opacity-80 transition px-3 py-1.5"
