@@ -68,17 +68,22 @@ const Auth = () => {
     await auth.signIn();
   };
 
+  const handlePuterGoogleSignIn = async () => {
+    clearError();
+    await auth.signIn();
+  };
+
   const isSignUp = mode === "signup";
 
   return (
     <main className="relative flex h-[calc(100svh-4.5rem)] max-h-[calc(100svh-4.5rem)] w-full !min-h-0 !pt-0 min-h-0 items-center justify-center overflow-hidden px-3 py-2">
       <div className="flex w-full max-w-md max-h-full min-h-0 flex-col justify-center">
-        <div className="max-h-full min-h-0 overflow-y-auto rounded-2xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
-          <div className="mb-4 flex flex-col items-center gap-0.5 text-center">
-            <h1 className="!text-xl sm:!text-2xl leading-snug">
+        <div className="max-h-full min-h-0 overflow-y-auto rounded-3xl border border-gray-100/80 bg-white/95 p-5 shadow-sm backdrop-blur sm:p-7">
+          <div className="mb-5 flex flex-col items-center gap-1 text-center">
+            <h1 className="!text-lg sm:!text-xl leading-snug">
               {isSignUp ? "Create your free account" : "Welcome back"}
             </h1>
-            <h2 className="!text-xs sm:!text-sm leading-snug px-1">
+            <h2 className="!text-[11px] sm:!text-xs leading-relaxed px-1 max-w-sm">
               {isSignUp
                 ? "Sharpen your CV with clear, AI-backed feedback."
                 : "Get honest feedback and fix what holds your CV back."}
@@ -107,7 +112,7 @@ const Auth = () => {
             ) : null}
           </div>
 
-          <div className="mb-4 grid grid-cols-2 gap-1.5 rounded-full bg-gray-100 p-1 text-sm font-semibold">
+          <div className="mb-6 grid grid-cols-2 gap-1 rounded-full bg-gray-100 p-1 text-sm font-semibold">
             <button
               type="button"
               onClick={() => setMode("signin")}
@@ -132,10 +137,10 @@ const Auth = () => {
             </button>
           </div>
 
-          <form onSubmit={handleSubmit} className="!gap-2 text-sm">
+          <form onSubmit={handleSubmit} className="!gap-4 text-sm">
             {isSignUp && (
-              <div className="form-div">
-                <label htmlFor="auth-name" className="text-xs sm:text-sm">
+              <div className="form-div !gap-1.5">
+                <label htmlFor="auth-name" className="text-sm">
                   Full name
                 </label>
                 <input
@@ -146,13 +151,13 @@ const Auth = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   autoComplete="name"
-                  className="!p-2.5 !text-sm !rounded-xl"
+                  className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
                 />
               </div>
             )}
 
-            <div className="form-div">
-              <label htmlFor="auth-email" className="text-xs sm:text-sm">
+            <div className="form-div !gap-1.5">
+              <label htmlFor="auth-email" className="text-sm">
                 Email
               </label>
               <input
@@ -163,12 +168,12 @@ const Auth = () => {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 autoComplete="email"
-                className="!p-2.5 !text-sm !rounded-xl"
+                className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
               />
             </div>
 
-            <div className="form-div">
-              <label htmlFor="auth-password" className="text-xs sm:text-sm">
+            <div className="form-div !gap-1.5">
+              <label htmlFor="auth-password" className="text-sm">
                 Password
               </label>
               <input
@@ -179,9 +184,43 @@ const Auth = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete={isSignUp ? "new-password" : "current-password"}
-                className="!p-2.5 !text-sm !rounded-xl"
+                className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
               />
             </div>
+
+            {!isSignUp && (
+              <>
+                <button
+                  type="button"
+                  onClick={handlePuterGoogleSignIn}
+                  disabled={isLoading}
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-dark-200 shadow-sm transition hover:bg-gray-50 disabled:opacity-60"
+                >
+                  <img
+                    src="/images/google.png"
+                    alt=""
+                    aria-hidden
+                    className="h-3.5 w-3.5"
+                  />
+                  {isLoading ? "Opening Puter…" : "Sign in with Google"}
+                </button>
+
+                <div className="relative my-1 w-full">
+                  <span className="block h-px w-full bg-gray-200" />
+                  <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-white px-2 text-[11px] uppercase tracking-wide text-gray-400">
+                    or
+                  </span>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="primary-button mt-2 !py-2 text-sm disabled:opacity-60"
+                >
+                  {isLoading ? "Opening Puter…" : "Sign in"}
+                </button>
+              </>
+            )}
 
             {error && (
               <p className="text-sm text-badge-red-text bg-badge-red rounded-md px-3 py-2">
@@ -189,19 +228,17 @@ const Auth = () => {
               </p>
             )}
 
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="primary-button mt-6 text-sm disabled:opacity-60 sm:mt-8"
-            >
-              {isLoading
-                ? "Opening Puter…"
-                : isSignUp
-                  ? "Create account"
-                  : "Sign in"}
-            </button>
+            {isSignUp && (
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="primary-button mt-4 !py-2 text-sm disabled:opacity-60"
+              >
+                {isLoading ? "Opening Puter…" : "Create account"}
+              </button>
+            )}
 
-            <p className="mt-1.5 text-center text-[0.65rem] leading-snug text-gray-500 sm:text-xs">
+            <p className="mt-1 text-center text-[0.65rem] leading-snug text-gray-500 sm:text-xs">
               Authentication is securely handled by{" "}
               <a
                 href="https://puter.com"

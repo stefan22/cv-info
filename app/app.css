@@ -46,6 +46,14 @@ textarea {
   @apply w-full p-4 inset-shadow rounded-2xl focus:outline-none bg-white;
 }
 
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
 form {
   @apply flex flex-col items-start gap-8 w-full;
 }

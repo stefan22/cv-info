@@ -3,12 +3,14 @@ import { useDropzone } from "react-dropzone";
 import { formatSize } from "~/lib/utils";
 
 interface FileUploaderProps {
+  /** Parent-controlled selection so the UI stays in sync (avoids remount + dropzone reset bugs). */
+  selectedFile: File | null;
   onFileSelect?: (file: File | null) => void;
 }
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
+const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0] || null;
@@ -17,15 +19,14 @@ const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
     [onFileSelect],
   );
 
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } =
-    useDropzone({
-      onDrop,
-      multiple: false,
-      accept: { "application/pdf": [".pdf"] },
-      maxSize: MAX_FILE_SIZE,
-    });
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    multiple: false,
+    accept: { "application/pdf": [".pdf"] },
+    maxSize: MAX_FILE_SIZE,
+  });
 
-  const file = acceptedFiles[0] || null;
+  const file = selectedFile;
 
   return (
     <div
@@ -36,7 +37,14 @@ const FileUploader = ({ onFileSelect }: FileUploaderProps) => {
           : "border-gray-200 bg-white hover:border-gray-300"
       }`}
     >
-      <input {...getInputProps()} />
+      <input
+        key={
+          selectedFile
+            ? `${selectedFile.name}-${selectedFile.lastModified}`
+            : "empty"
+        }
+        {...getInputProps()}
+      />
 
       {file ? (
         <div
