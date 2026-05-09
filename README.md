@@ -25,6 +25,10 @@ npm run dev
 1. Users sign in using **Puter** 
 2. On **Upload**, the user provides company, target job title, job description, and a **PDF** file (CV)
 3. The CV is then analysed using Puter AI
-4. Feedback returned back to the user's dashboard 
+4. Feedback returned back to the user's dashboard
+
+
+<img width="1581" height="959" alt="Screenshot 2026-05-09 at 3 32 33 am" src="https://github.com/user-attachments/assets/50333857-a0ad-4edf-99bf-59906be622d0" />
+
 
 :100:
