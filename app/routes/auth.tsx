@@ -256,7 +256,7 @@ const Auth = () => {
 
                 <div className="flex w-full flex-col gap-3">
                   <p
-                    className={`text-xs leading-relaxed text-neutral-600 ${authHelperIndent} max-sm:text-left sm:text-center`}
+                    className={`text-xs leading-relaxed text-neutral-600 ${authHelperIndent} max-sm:text-left text-center`}
                   >
                     Already have an account?{" "}
                     <button
