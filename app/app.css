@@ -20,9 +20,22 @@
   --color-badge-yellow-text: #73321b;
 }
 
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 html,
 body {
-  @apply min-h-dvh bg-white;
+  /* svh on small viewports avoids iOS layout jumps when the keyboard changes dvh. */
+  @apply min-h-svh overflow-x-clip bg-white;
+}
+
+@media (min-width: 40rem) {
+  html,
+  body {
+    min-height: 100dvh;
+  }
 }
 
 main {
@@ -44,11 +57,11 @@ label {
   @apply text-dark-200;
 }
 input {
-  @apply box-border h-12 w-full rounded-md border border-solid border-[#dadce0] bg-white px-3 py-2 text-sm leading-snug focus:outline-none;
+  @apply box-border h-12 w-full min-w-0 rounded-md border border-solid border-[#dadce0] bg-white px-3 py-2 text-sm max-sm:text-base leading-snug focus:outline-none;
 }
 
 textarea {
-  @apply w-full rounded-md border border-solid border-[#dadce0] bg-white p-4 focus:outline-none;
+  @apply w-full min-w-0 rounded-md border border-solid border-[#dadce0] bg-white p-4 text-sm max-sm:text-base focus:outline-none;
 }
 
 button:not(:disabled) {

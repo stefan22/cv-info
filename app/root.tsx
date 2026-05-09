@@ -38,7 +38,10 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, interactive-widget=overlays-content"
+        />
         <Meta />
         <title>Cake®Stack</title>
         <Links />
@@ -55,7 +58,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="flex min-h-dvh flex-col bg-white">
+    <div className="flex min-h-svh flex-col bg-white sm:min-h-dvh">
       <MainNavbar />
       <div className="relative flex flex-1 flex-col bg-[url('/images/bg.png')] bg-cover bg-center bg-no-repeat bg-scroll md:bg-fixed w-full">
         <div
