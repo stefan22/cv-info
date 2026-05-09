@@ -3,7 +3,7 @@ export const cvs: CV[] = [
     id: "1",
     companyName: "Google",
     jobTitle: "Frontend Developer",
-    imagePath: "/images/cv_01.png",
+    imagePath: "/images/cv_04.jpg",
     cvPath: "",
     feedback: {
       overallScore: 85,
@@ -33,7 +33,7 @@ export const cvs: CV[] = [
     id: "2",
     companyName: "JP Morgan",
     jobTitle: "Cloud Engineer",
-    imagePath: "/images/cv_02.png",
+    imagePath: "/images/cv_05.jpg",
     cvPath: "",
     feedback: {
       overallScore: 55,
@@ -63,7 +63,7 @@ export const cvs: CV[] = [
     id: "3",
     companyName: "Apple",
     jobTitle: "iOS Developer",
-    imagePath: "/images/cv_03.png",
+    imagePath: "/images/cv_06.jpg",
     cvPath: "",
     feedback: {
       overallScore: 75,
@@ -93,7 +93,7 @@ export const cvs: CV[] = [
     id: "4",
     companyName: "Facebook",
     jobTitle: "Frontend Developer",
-    imagePath: "/images/cv_01.png",
+    imagePath: "/images/cv_02.png",
     cvPath: "",
     feedback: {
       overallScore: 75,
@@ -123,7 +123,7 @@ export const cvs: CV[] = [
     id: "5",
     companyName: "Proton",
     jobTitle: "Cloud Engineer",
-    imagePath: "/images/cv_02.png",
+    imagePath: "/images/cv_08.jpg",
     cvPath: "",
     feedback: {
       overallScore: 88,
@@ -233,7 +233,7 @@ export const prepareInstructions = ({
   jobDescription: string;
 }) =>
   `You are an expert in ATS (Applicant Tracking System) and cv analysis.
-      Please analyze and rate this cv and suggest how to improve it.
+      Please analyse and rate this cv and suggest how to improve it.
       The rating can be low if the cv is bad.
       Be thorough and detailed. Don't be afraid to point out any mistakes or areas for improvement.
       If there is a lot to improve, don't hesitate to give low scores. This is to help the user to improve their cv.

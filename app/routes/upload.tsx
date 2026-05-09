@@ -6,6 +6,17 @@ import convertPdfToImage from '~/lib/pdf2img';
 import { generateUUID } from '~/lib/utils';
 import { prepareInstructions } from '~/constants';
 
+const uploadLabelClass = 'text-sm max-sm:pl-[5px]';
+
+const uploadInputClass =
+  'box-border h-12 w-full min-w-0 max-sm:!w-full max-sm:max-w-none max-sm:px-4 max-sm:text-base self-stretch rounded-md border border-solid border-[#dadce0] bg-white px-3 py-2 text-sm leading-snug focus:border-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-100';
+
+const uploadTextareaClass =
+  'box-border min-h-24 w-full min-w-0 max-sm:!w-full max-sm:max-w-none max-sm:px-4 max-sm:text-base self-stretch rounded-md border border-solid border-[#dadce0] bg-white px-3 py-2 text-sm leading-snug focus:border-indigo-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-100';
+
+const authCtaMobile =
+  'max-sm:!min-h-12 max-sm:!py-3 max-sm:!inline-flex max-sm:!items-center max-sm:!justify-center';
+
 const Upload = () => {
   const { auth, isLoading: storeLoading, fs, ai, kv } = usePuterStore();
   const navigate = useNavigate();
@@ -23,7 +34,7 @@ const Upload = () => {
     setFile(file);
   };
 
-  const handleAnalyze = async ({
+  const handleAnalyse = async ({
     companyName,
     jobTitle,
     jobDescription,
@@ -78,14 +89,14 @@ const Upload = () => {
 
     await kv.set(`cv:${uuid}`, JSON.stringify(data));
 
-    setStatusText('Analyzing...');
+    setStatusText('Analysing…');
 
     const feedback = await ai.feedback(
       uploadedFile.path,
       prepareInstructions({ jobTitle, jobDescription })
     );
     if (!feedback) {
-      fail('Error: Failed to analyse cv');
+      fail('Error: Failed to analyse CV');
       return;
     }
 
@@ -126,107 +137,120 @@ const Upload = () => {
 
     if (!file) return;
 
-    handleAnalyze({ companyName, jobTitle, jobDescription, file });
+    handleAnalyse({ companyName, jobTitle, jobDescription, file });
   };
 
   if (storeLoading || !auth.isAuthenticated) {
     return (
-      <main className="relative">
-        <section className="w-full max-w-2xl mx-auto px-6 pt-20 pb-12 text-center">
-          <h2>{storeLoading ? 'Loading…' : 'Redirecting to sign in…'}</h2>
-        </section>
+      <main className="relative min-h-[calc(100svh-4.5rem)] w-full overflow-x-hidden overflow-y-auto !min-h-0 sm:flex sm:items-center sm:justify-center sm:py-12">
+        <div className="mx-auto w-full max-w-md px-6 pb-12 pt-20 sm:max-w-xl sm:px-8 sm:pb-0 sm:pt-0">
+          <div className="w-full border-0 bg-transparent p-0 shadow-none max-sm:backdrop-blur-none sm:rounded-3xl sm:border sm:border-gray-100/80 sm:bg-white/95 sm:p-8 sm:shadow-sm sm:backdrop-blur">
+            <div className="mb-10 flex flex-col items-center gap-2 text-center max-sm:items-start max-sm:text-left">
+              <h2>{storeLoading ? 'Loading…' : 'Redirecting to sign in…'}</h2>
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
 
   return (
-    <main className="relative flex h-[calc(100svh-4.5rem)] max-h-[calc(100svh-4.5rem)] w-full !min-h-0 !pt-0 items-center justify-center overflow-hidden px-3 py-2">
-      <section className="w-full max-w-md mx-auto max-h-full min-h-0 overflow-y-auto px-4 py-4 flex flex-col items-center gap-6">
-        <div className="w-full text-center flex flex-col gap-1">
-          <h1 className="!text-xl sm:!text-2xl leading-snug">
-            Smart feedback for your dream job
-          </h1>
-          {isProcessing ?
-            <>
-              <h2 className="!text-sm">{statusText}</h2>
-              <img
-                src="/images/cv-scan.gif"
-                alt="Scanning…"
-                className="w-full"
-              />
-            </>
-          : (
-            <>
-              <h2 className="!text-sm">Upload a PDF file to analyse your CV</h2>
-              <p className="text-sm text-dark-200 leading-relaxed px-1">
-                Get an ATS score and tailored improvement tips in seconds.
-              </p>
-            </>
-          )}
+    <main className="relative min-h-[calc(100svh-4.5rem)] w-full overflow-x-hidden overflow-y-auto !min-h-0 sm:flex sm:items-center sm:justify-center sm:py-12">
+      <div className="mx-auto w-full max-w-md px-6 pb-12 pt-20 sm:max-w-xl sm:px-8 sm:pb-0 sm:pt-0">
+        <div className="w-full border-0 bg-transparent p-0 shadow-none max-sm:backdrop-blur-none sm:rounded-3xl sm:border sm:border-gray-100/80 sm:bg-white/95 sm:p-8 sm:shadow-sm sm:backdrop-blur">
+          <div className="mb-10 flex flex-col items-center gap-2 text-center max-sm:items-start max-sm:text-left">
+            <h1 className="max-w-xl text-balance">
+              Smart feedback for your dream job
+            </h1>
+
+            {isProcessing ?
+              <>
+                <h2 className="max-w-xl text-balance">{statusText}</h2>
+                <img
+                  src="/images/cv-scan.gif"
+                  alt="Scanning…"
+                  className="mt-4 w-full max-w-md"
+                />
+              </>
+            : (
+              <>
+                <h2 className="max-w-xl text-balance">
+                  Upload a PDF file to analyse your CV
+                </h2>
+                <p className="max-w-xl text-balance text-sm leading-relaxed text-neutral-700">
+                  Get an ATS score and tailored improvement tips in seconds.
+                </p>
+              </>
+            )}
+          </div>
+
+          {!isProcessing ?
+            <form
+              id="upload-form"
+              onSubmit={handleSubmit}
+              className="flex w-full max-w-full flex-col gap-0 text-sm max-sm:items-stretch"
+            >
+              <div className="flex w-full max-w-full min-w-0 flex-col gap-4">
+                <div className="form-div !gap-2 max-sm:w-full">
+                  <label htmlFor="company-name" className={uploadLabelClass}>
+                    Company name
+                  </label>
+                  <input
+                    id="company-name"
+                    type="text"
+                    name="company-name"
+                    placeholder="Company name"
+                    className={uploadInputClass}
+                  />
+                </div>
+                <div className="form-div !gap-2 max-sm:w-full">
+                  <label htmlFor="job-title" className={uploadLabelClass}>
+                    Job title
+                  </label>
+                  <input
+                    id="job-title"
+                    type="text"
+                    name="job-title"
+                    required
+                    placeholder="Enter the target job title"
+                    className={uploadInputClass}
+                  />
+                </div>
+                <div className="form-div !gap-2 max-sm:w-full">
+                  <label htmlFor="job-description" className={uploadLabelClass}>
+                    Job description
+                  </label>
+                  <textarea
+                    id="job-description"
+                    rows={4}
+                    name="job-description"
+                    required
+                    placeholder="Copy and paste the target job description to scan your CV against"
+                    className={uploadTextareaClass}
+                  />
+                </div>
+                <div className="form-div !gap-2 max-sm:w-full">
+                  <FileUploader
+                    selectedFile={file}
+                    onFileSelect={handleFileSelect}
+                    label="CV file"
+                    labelClassName={uploadLabelClass}
+                    inputId="uploader"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={!file}
+                className={`primary-button ${authCtaMobile} mt-10 w-full text-sm disabled:opacity-60 sm:!min-h-12 sm:!py-3`}
+              >
+                Analyse CV
+              </button>
+            </form>
+          : null}
         </div>
-
-        {!isProcessing && (
-          <form
-            id="upload-form"
-            onSubmit={handleSubmit}
-            className="w-full mx-auto !gap-4 !items-stretch">
-            <div className="w-full bg-white/95 backdrop-blur rounded-3xl border border-gray-100/80 p-5 shadow-sm sm:p-6 flex flex-col gap-4">
-              <div className="form-div !gap-1.5">
-                <label htmlFor="company-name" className="text-sm">
-                  Company name
-                </label>
-                <input
-                  type="text"
-                  name="company-name"
-                  placeholder="Company name"
-                  id="company-name"
-                  className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
-                />
-              </div>
-              <div className="form-div !gap-1.5">
-                <label htmlFor="job-title" className="text-sm">
-                  Job title
-                </label>
-                <input
-                  type="text"
-                  name="job-title"
-                  placeholder="Enter the target job title"
-                  id="job-title"
-                  className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
-                />
-              </div>
-              <div className="form-div !gap-1.5">
-                <label htmlFor="job-description" className="text-sm">
-                  Job description
-                </label>
-                <textarea
-                  rows={4}
-                  name="job-description"
-                  placeholder="Copy and paste the target job description to scan your CV against"
-                  id="job-description"
-                  className="!p-2.5 !text-sm !rounded-xl border border-transparent focus:!border-indigo-200 focus-visible:!outline-none focus-visible:!ring-2 focus-visible:!ring-indigo-100"
-                />
-              </div>
-              <div className="form-div !gap-1.5">
-                <label htmlFor="uploader" className="text-sm">
-                  CV file
-                </label>
-                <FileUploader
-                  selectedFile={file}
-                  onFileSelect={handleFileSelect}
-                />
-              </div>
-            </div>
-
-            <button
-              className="primary-button mt-1 text-sm"
-              type="submit"
-              disabled={!file}>
-              Analyse CV
-            </button>
-          </form>
-        )}
-      </section>
+      </div>
     </main>
   );
 };

@@ -36,19 +36,19 @@ const ATS: React.FC<ATSProps> = ({ score, suggestions }) => {
       <div className="flex items-center gap-4 mb-6">
         <img src={iconSrc} alt="ATS Score Icon" className="w-12 h-12" />
         <div>
-          <h2 className="text-lg font-semibold !text-black">ATS Score - {score}/100</h2>
+          <h2 className="!text-lg font-semibold">ATS Score - {score}/100</h2>
         </div>
       </div>
 
       {/* Description section */}
       <div className="mb-6">
-        <h3
+        <p
           className={`text-base font-semibold mb-2 ${
             score > 69 ? "text-green-800" : score > 49 ? "text-amber-800" : "text-rose-800"
           }`}
         >
           {subtitle}
-        </h3>
+        </p>
         <p className="text-sm text-gray-700 mb-4">
           This score represents how well your CV is likely to perform in
           Applicant Tracking Systems used by employers.

@@ -143,7 +143,7 @@ const Dashboard = () => {
           </div>
         ) : cvs.length === 0 ? (
           <div className="mt-10 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 text-center flex flex-col gap-4 items-center">
-            <h2 className="!text-base !text-black">No CVs uploaded yet</h2>
+            <h2 className="!text-base">No CVs uploaded yet</h2>
             <p className="text-sm text-dark-200">
               Upload a CV to get your first ATS score and actionable feedback.
             </p>

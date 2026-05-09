@@ -1,20 +1,68 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
+import type { FileRejection } from "react-dropzone";
 import { useDropzone } from "react-dropzone";
-import { formatSize } from "~/lib/utils";
+import { cn, formatSize } from "~/lib/utils";
 
 interface FileUploaderProps {
   /** Parent-controlled selection so the UI stays in sync (avoids remount + dropzone reset bugs). */
   selectedFile: File | null;
   onFileSelect?: (file: File | null) => void;
+  /** When set, label is shown on the left; PDF validation errors align to the right on the same row. */
+  label?: string;
+  /** Classes for the label (e.g. upload form label styles). */
+  labelClassName?: string;
+  /** `id` forwarded to the hidden file input — use with `label` for a11y */
+  inputId?: string;
 }
 
 const MAX_FILE_SIZE = 20 * 1024 * 1024;
 
-const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
+function fileIsPdfExtensionOnly(file: File): boolean {
+  /** Require a real *.pdf basename (dropzone MIME filter can still leak odd OS-reported types). */
+  return /\.pdf$/i.test(file.name.trim());
+}
+
+function shouldShowPdfOnlyRejected(rejections: FileRejection[]): boolean {
+  return rejections.some((r) =>
+    r.errors.some((e) => e.code === "file-invalid-type"),
+  );
+}
+
+const FileUploader = ({
+  selectedFile,
+  onFileSelect,
+  label,
+  labelClassName,
+  inputId = "cv-file-upload",
+}: FileUploaderProps) => {
+  const [pdfOnlyMessage, setPdfOnlyMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!selectedFile) {
+      setPdfOnlyMessage(null);
+    }
+  }, [selectedFile]);
+
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      const file = acceptedFiles[0] || null;
-      onFileSelect?.(file);
+    (acceptedFiles: File[], rejections: FileRejection[]) => {
+      setPdfOnlyMessage(null);
+
+      if (rejections.length > 0 && shouldShowPdfOnlyRejected(rejections)) {
+        setPdfOnlyMessage("PDF only allowed");
+        return;
+      }
+
+      const next = acceptedFiles[0];
+      if (!next) {
+        return;
+      }
+
+      if (!fileIsPdfExtensionOnly(next)) {
+        setPdfOnlyMessage("PDF only allowed");
+        return;
+      }
+
+      onFileSelect?.(next);
     },
     [onFileSelect],
   );
@@ -28,13 +76,11 @@ const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
 
   const file = selectedFile;
 
-  return (
+  const root = (
     <div
       {...getRootProps()}
-      className={`w-full rounded-xl border border-dashed transition cursor-pointer px-4 py-3 ${
-        isDragActive
-          ? "border-blue-400 bg-blue-50/40"
-          : "border-gray-200 bg-white hover:border-gray-300"
+      className={`w-full cursor-pointer rounded-md border border-dashed border-[#dadce0] bg-white px-4 py-3 transition hover:border-neutral-400 ${
+        isDragActive ? "border-blue-400 bg-blue-50/40" : ""
       }`}
     >
       <input
@@ -43,7 +89,7 @@ const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
             ? `${selectedFile.name}-${selectedFile.lastModified}`
             : "empty"
         }
-        {...getInputProps()}
+        {...getInputProps({ id: inputId })}
       />
 
       {file ? (
@@ -62,7 +108,7 @@ const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
           </div>
           <button
             type="button"
-            className="p-1.5 rounded-full hover:bg-gray-100"
+            className="p-1.5 rounded-md hover:bg-gray-100"
             aria-label="Remove file"
             onClick={(e) => {
               e.preventDefault();
@@ -86,11 +132,34 @@ const FileUploader = ({ selectedFile, onFileSelect }: FileUploaderProps) => {
               and drop
             </p>
             <p className="text-xs text-gray-500">
-              PDF (max {formatSize(MAX_FILE_SIZE)})
+              PDF ONLY (max {formatSize(MAX_FILE_SIZE)})
             </p>
           </div>
         </div>
       )}
+    </div>
+  );
+
+  if (!label) {
+    return root;
+  }
+
+  return (
+    <div className="flex w-full flex-col gap-2">
+      <div className="flex w-full flex-row items-baseline justify-between gap-3">
+        <label htmlFor={inputId} className={cn(labelClassName)}>
+          {label}
+        </label>
+        {pdfOnlyMessage ?
+          <span
+            className="shrink-0 text-right text-xs font-medium leading-tight text-badge-red-text"
+            role="alert"
+          >
+            {pdfOnlyMessage}
+          </span>
+        : null}
+      </div>
+      {root}
     </div>
   );
 };

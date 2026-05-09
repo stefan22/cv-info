@@ -19,7 +19,9 @@ export default function Home() {
       <section className="w-full max-w-[88rem] mx-auto px-6 pt-20 pb-12">
         <div className="page-heading !max-w-none !items-start !text-left">
           <h1>Free CV Insights, Powered by AI</h1>
-          <h2>See strengths, gaps, and next steps tailored to your CV in seconds</h2>
+          <h2>
+            See strengths, gaps, and next steps tailored to your CV in seconds
+          </h2>
         </div>
 
         {cvs.length > 0 && (
@@ -30,7 +32,7 @@ export default function Home() {
 
             <div className="col-span-full my-6 bg-white rounded-2xl border border-gray-100 shadow-sm p-8 flex flex-col sm:flex-row items-center justify-between gap-6">
               <div className="text-center sm:text-left">
-                <h3 className="text-xl font-semibold text-gradient">
+                <h3 className="!text-xl">
                   Upload your CV to find out more
                 </h3>
                 <p className="text-sm text-dark-200 mt-1">

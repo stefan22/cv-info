@@ -109,11 +109,9 @@ export default function CvDetailRoute() {
             )}
             </section>
             <section className="feedback-section !px-4">
-              <h2
-                className="relative z-20 text-4xl font-bold mt-[5vh] text-right mr-[10px] inline-block self-end rounded-md bg-white/85 backdrop-blur-[1px] px-2 py-1"
-                style={{ color: '#2b2b2b', opacity: 0.95 }}>
-                CV Review
-              </h2>
+              <div className="relative z-20 mt-[5vh] mr-[10px] inline-block self-end rounded-md bg-white/85 px-2 py-1 backdrop-blur-[1px]">
+                <h1 className="!text-4xl text-right">CV Review</h1>
+              </div>
               {feedback ?
                 <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
                   <Summary feedback={feedback} />

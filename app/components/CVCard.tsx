@@ -16,15 +16,15 @@ const CVCard = ({
       <div className="flex flex-row gap-2 justify-between items-start">
         <div className="flex-1 flex flex-col gap-1 min-w-0">
           {companyName && (
-            <h2 className="!text-base !text-black font-semibold truncate">
+            <p className="text-base font-semibold text-neutral-900 truncate">
               {companyName}
-            </h2>
+            </p>
           )}
           {jobTitle && (
-            <h3 className="text-sm text-gray-500 truncate">{jobTitle}</h3>
+            <p className="text-sm text-gray-500 truncate">{jobTitle}</p>
           )}
           {!companyName && !jobTitle && (
-            <h2 className="!text-base !text-black font-semibold">CV</h2>
+            <p className="text-base font-semibold text-neutral-900">CV</p>
           )}
         </div>
         <div className="shrink-0 scale-[0.85] origin-top-right">
