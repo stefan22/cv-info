@@ -28,7 +28,8 @@ npm run dev
 4. Feedback returned back to the user's dashboard
 
 
-<img width="1581" height="959" alt="Screenshot 2026-05-09 at 3 32 33 am" src="https://github.com/user-attachments/assets/50333857-a0ad-4edf-99bf-59906be622d0" />
+<img width="1581" height="959" alt="Screenshot 2026-05-09 at 3 32 33 am" src="https://github.com/user-attachments/assets/25cb1587-15aa-41c3-a6fe-3c605baa6b19" />
+
 
 
 :100:
