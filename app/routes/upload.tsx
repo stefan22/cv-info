@@ -1,6 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import FileUploader from '~/components/FileUploader';
-import { usePuterStore } from '~/lib/puter';
+import { parsePuterAiError, usePuterStore, type ParsedPuterAiError } from '~/lib/puter';
 import { useNavigate } from 'react-router';
 import convertPdfToImage from '~/lib/pdf2img';
 import { generateUUID } from '~/lib/utils';
@@ -22,6 +22,9 @@ const Upload = () => {
   const navigate = useNavigate();
   const [isProcessing, setIsProcessing] = useState(false);
   const [statusText, setStatusText] = useState('');
+  const [errorMessage, setErrorMessage] = useState<ParsedPuterAiError | null>(
+    null
+  );
   const [file, setFile] = useState<File | null>(null);
 
   useEffect(() => {
@@ -45,84 +48,100 @@ const Upload = () => {
     jobDescription: string;
     file: File;
   }) => {
+    setErrorMessage(null);
     setIsProcessing(true);
 
-    const fail = (message: string) => {
+    let draftKvKey: string | null = null;
+
+    const fail = (message: string, error?: ParsedPuterAiError | null) => {
+      if (error) {
+        setErrorMessage(error);
+      } else {
+        setErrorMessage({ message, isCreditError: false });
+      }
       setStatusText(message);
       setIsProcessing(false);
     };
 
-    setStatusText('Uploading the file...');
-    const uploadedFile = await fs.upload([file]);
-    if (!uploadedFile) {
-      fail('Error: Failed to upload file');
-      return;
-    }
-
-    setStatusText('Converting to image...');
-    const imageFile = await convertPdfToImage(file);
-    if (!imageFile.file) {
-      fail(`Error: ${imageFile.error ?? 'Failed to convert PDF to image'}`);
-      return;
-    }
-
-    setStatusText('Uploading the image...');
-    const uploadedImage = await fs.upload([imageFile.file]);
-    if (!uploadedImage) {
-      fail('Error: Failed to upload image');
-      return;
-    }
-
-    setStatusText('Preparing data...');
-    const uuid = generateUUID();
-    const data = {
-      id: uuid,
-      cvPath: uploadedFile.path,
-      imagePath: uploadedImage.path,
-      companyName,
-      jobTitle,
-      jobDescription,
-      feedback: '' as string | Feedback,
-    };
-
-    console.log('data  ', data);
-
-    await kv.set(`cv:${uuid}`, JSON.stringify(data));
-
-    setStatusText('Analysing…');
-
-    const feedback = await ai.feedback(
-      uploadedFile.path,
-      prepareInstructions({ jobTitle, jobDescription })
-    );
-    if (!feedback) {
-      fail('Error: Failed to analyse CV');
-      return;
-    }
-
-    const content = feedback.message.content;
-    const feedbackText =
-      typeof content === 'string' ? content
-      : Array.isArray(content) && content[0] && 'text' in content[0] ?
-        (content[0] as { text: string }).text
-      : null;
-    if (feedbackText === null) {
-      fail('Error: Unexpected AI response');
-      return;
-    }
-
     try {
-      data.feedback = JSON.parse(feedbackText) as Feedback;
-    } catch {
-      fail('Error: Invalid feedback from AI');
-      return;
+      setStatusText('Uploading the file...');
+      const uploadedFile = await fs.upload([file]);
+      if (!uploadedFile) {
+        fail('Error: Failed to upload file');
+        return;
+      }
+
+      setStatusText('Converting to image...');
+      const imageFile = await convertPdfToImage(file);
+      if (!imageFile.file) {
+        fail(`Error: ${imageFile.error ?? 'Failed to convert PDF to image'}`);
+        return;
+      }
+
+      setStatusText('Uploading the image...');
+      const uploadedImage = await fs.upload([imageFile.file]);
+      if (!uploadedImage) {
+        fail('Error: Failed to upload image');
+        return;
+      }
+
+      setStatusText('Preparing data...');
+      const uuid = generateUUID();
+      draftKvKey = `cv:${uuid}`;
+      const data = {
+        id: uuid,
+        cvPath: uploadedFile.path,
+        imagePath: uploadedImage.path,
+        companyName,
+        jobTitle,
+        jobDescription,
+        feedback: '' as string | Feedback,
+      };
+
+      await kv.set(draftKvKey, JSON.stringify(data));
+
+      setStatusText('Analysing…');
+
+      const feedback = await ai.feedback(
+        uploadedFile.path,
+        prepareInstructions({ jobTitle, jobDescription })
+      );
+      if (!feedback) {
+        fail('Error: Failed to analyse CV');
+        return;
+      }
+
+      const content = feedback.message.content;
+      const feedbackText =
+        typeof content === 'string' ? content
+        : Array.isArray(content) && content[0] && 'text' in content[0] ?
+          (content[0] as { text: string }).text
+        : null;
+      if (feedbackText === null) {
+        fail('Error: Unexpected AI response');
+        return;
+      }
+
+      try {
+        data.feedback = JSON.parse(feedbackText) as Feedback;
+      } catch {
+        fail('Error: Invalid feedback from AI');
+        return;
+      }
+
+      draftKvKey = null;
+      await kv.set(`cv:${uuid}`, JSON.stringify(data));
+      setStatusText('Analysis complete, redirecting...');
+      navigate(`/cv/${uuid}`);
+    } catch (err) {
+      const parsed = parsePuterAiError(err);
+      fail(parsed.message, parsed);
+    } finally {
+      if (draftKvKey) {
+        await kv.delete(draftKvKey);
+      }
+      setIsProcessing(false);
     }
-
-    console.log('data  ', data);
-
-    await kv.set(`cv:${uuid}`, JSON.stringify(data));
-    setStatusText('Analysis complete, redirecting...');
-    navigate(`/cv/${uuid}`);
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -137,7 +156,13 @@ const Upload = () => {
 
     if (!file) return;
 
-    handleAnalyse({ companyName, jobTitle, jobDescription, file });
+    void handleAnalyse({ companyName, jobTitle, jobDescription, file }).catch(
+      (err) => {
+        const parsed = parsePuterAiError(err);
+        setErrorMessage(parsed);
+        setIsProcessing(false);
+      }
+    );
   };
 
   if (storeLoading || !auth.isAuthenticated) {
@@ -185,11 +210,32 @@ const Upload = () => {
           </div>
 
           {!isProcessing ?
-            <form
-              id="upload-form"
-              onSubmit={handleSubmit}
-              className="flex w-full max-w-full flex-col gap-0 text-sm max-sm:items-stretch"
-            >
+            <>
+              {errorMessage && (
+                <p className="mb-6 text-sm text-badge-red-text bg-badge-red rounded-md px-3 py-2">
+                  {errorMessage.isCreditError ?
+                    <>
+                      Your Puter account has run out of free AI credits. Add
+                      credits at{' '}
+                      <a
+                        href="https://puter.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline"
+                      >
+                        puter.com
+                      </a>{' '}
+                      or wait for your monthly allowance to reset, then try
+                      again.
+                    </>
+                  : errorMessage.message}
+                </p>
+              )}
+              <form
+                id="upload-form"
+                onSubmit={handleSubmit}
+                className="flex w-full max-w-full flex-col gap-0 text-sm max-sm:items-stretch"
+              >
               <div className="flex w-full max-w-full min-w-0 flex-col gap-4">
                 <div className="form-div !gap-2 max-sm:w-full">
                   <label htmlFor="company-name" className={uploadLabelClass}>
@@ -248,6 +294,7 @@ const Upload = () => {
                 Analyse CV
               </button>
             </form>
+            </>
           : null}
         </div>
       </div>
