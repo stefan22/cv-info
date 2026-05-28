@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router';
+
 import { usePuterStore } from '~/lib/puter';
 
 /** Identical bar markup to netlify-blog `components/Header.js` (lines 50–57). */
@@ -56,13 +57,13 @@ const MainNavbar = () => {
   }, [location.pathname, location.search]);
 
   useEffect(() => {
-    if (mobileOpen) setMobileMenuHasOpened(true);
+    if (mobileOpen) {setMobileMenuHasOpened(true);}
   }, [mobileOpen]);
 
   useEffect(() => {
-    if (!mobileOpen) return;
+    if (!mobileOpen) {return;}
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileOpen(false);
+      if (e.key === 'Escape') {setMobileOpen(false);}
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);

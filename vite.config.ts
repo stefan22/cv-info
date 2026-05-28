@@ -1,8 +1,8 @@
 /// <reference types="vitest/config" />
 
 import { reactRouter } from "@react-router/dev/vite";
-import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const isVitest = process.env.VITEST === "true";

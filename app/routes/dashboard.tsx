@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router";
+
 import CVCard from "~/components/CVCard";
 import { usePuterStore } from "~/lib/puter";
 
@@ -62,7 +63,7 @@ const Dashboard = () => {
         );
 
         for (const value of values) {
-          if (!value) continue;
+          if (!value) {continue;}
           try {
             items.push(JSON.parse(value) as StoredCv);
           } catch {

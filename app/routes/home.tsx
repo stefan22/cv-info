@@ -1,5 +1,7 @@
-import type { Route } from "./+types/home";
 import {Link} from "react-router";
+
+import type { Route } from "./+types/home";
+
 import CVCard from "~/components/CVCard";
 import {cvs} from "~/constants";
 
