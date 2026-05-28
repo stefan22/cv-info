@@ -1,4 +1,5 @@
 import { Link } from "react-router";
+
 import ScoreCircle from "~/components/ScoreCircle";
 
 const CVCard = ({

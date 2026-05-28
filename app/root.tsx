@@ -1,3 +1,4 @@
+import { Analytics } from '@vercel/analytics/react';
 import { useEffect } from 'react';
 import {
   isRouteErrorResponse,
@@ -8,9 +9,10 @@ import {
   ScrollRestoration,
 } from 'react-router';
 
-import { Analytics } from '@vercel/analytics/react';
 import type { Route } from './+types/root';
+
 import './app.css';
+
 import MainNavbar from '~/components/MainNavbar';
 import { usePuterStore } from '~/lib/puter';
 
@@ -47,6 +49,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Links />
       </head>
       <body>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){function r(n){if(n.nodeType!==1)return;var e=n;if(e.tagName==="USAGE-LIMIT-DIALOG"){e.remove();return}e.querySelectorAll&&e.querySelectorAll("usage-limit-dialog").forEach(function(t){t.remove()})}function s(){if(!document.body)return;r(document.body);new MutationObserver(function(n){n.forEach(function(e){e.addedNodes.forEach(r)})}).observe(document.body,{childList:!0,subtree:!0})}document.body?s():document.addEventListener("DOMContentLoaded",s,{once:!0})})();`,
+          }}
+        />
         <script src="https://js.puter.com/v2/"></script>
         {children}
         <ScrollRestoration />

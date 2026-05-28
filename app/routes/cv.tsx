@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router';
-import { usePuterStore } from '~/lib/puter';
-import Details from '~/components/Details';
+import { useNavigate,useParams } from 'react-router';
+
 import ATS from '~/components/ATS';
+import Details from '~/components/Details';
 import Summary from '~/components/Summary';
+import { usePuterStore } from '~/lib/puter';
 
 type StoredCv = Omit<CV, 'feedback'> & {
   feedback: Feedback | string;
@@ -59,26 +60,26 @@ export default function CvDetailRoute() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/cv/${id}`);
+    if (!isLoading && !auth.isAuthenticated) {navigate(`/auth?next=/cv/${id}`);}
   }, [isLoading]);
 
   useEffect(() => {
     const loadCV = async () => {
       const cv = await kv.get(`cv:${id}`);
 
-      if (!cv) return;
+      if (!cv) {return;}
 
       const data = JSON.parse(cv);
 
       const cvBlob = await fs.read(data.cvPath);
-      if (!cvBlob) return;
+      if (!cvBlob) {return;}
 
       const pdfBlob = new Blob([cvBlob], { type: 'application/pdf' });
       const cvUrl = URL.createObjectURL(pdfBlob);
       setCvUrl(cvUrl);
 
       const imageBlob = await fs.read(data.imagePath);
-      if (!imageBlob) return;
+      if (!imageBlob) {return;}
       const imageUrl = URL.createObjectURL(imageBlob);
       setImageUrl(imageUrl);
 

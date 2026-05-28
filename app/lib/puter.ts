@@ -34,7 +34,7 @@ declare global {
       kv: {
         get: (key: string) => Promise<string | null>;
         set: (key: string, value: string) => Promise<boolean>;
-        delete: (key: string) => Promise<boolean>;
+        del: (key: string) => Promise<boolean>;
         list: (pattern: string, returnValues?: boolean) => Promise<string[]>;
         flush: () => Promise<boolean>;
       };
@@ -98,6 +98,207 @@ interface PuterStore {
 
 const getPuter = (): typeof window.puter | null =>
   typeof window !== 'undefined' && window.puter ? window.puter : null;
+
+const CREDIT_ERROR_KEYWORDS = [
+  'usage-limited-chat',
+  'usage limit',
+  'permission denied',
+  'insufficient',
+  'insufficient_funds',
+  'credit',
+  'allowance',
+  'ai usage limit',
+  'funding',
+  'low balance',
+  'not enough funding',
+  '402',
+];
+
+const PUTER_BILLING_MODAL_TAG = 'usage-limit-dialog';
+
+const PUTER_BILLING_MODAL_KEYWORDS = [
+  'low balance',
+  'not enough funding',
+  'please upgrade',
+];
+
+const GENERIC_ANALYSIS_ERROR =
+  'Failed to analyse CV. Please try again.';
+
+export const CREDIT_ERROR_HEADING = 'AI Puter Credits Exhausted';
+
+export const CREDIT_ERROR_PARAGRAPH_1 =
+  'Your Puter account has run out of free AI credits. Add credits at puter.com or wait for your monthly allowance to reset, then try again.';
+
+export const CREDIT_ERROR_PARAGRAPH_2 =
+  "Our application is 100% free. It uses your Puter's free AI allowance to analyse your CV. This is a limitation of the Puter.com service. If you have another Gmail account, you may be able to use it to continue with your CV analysis.";
+
+export const CREDIT_ERROR_MESSAGE = `${CREDIT_ERROR_PARAGRAPH_1} ${CREDIT_ERROR_PARAGRAPH_2}`;
+
+let billingModalObserverInstalled = false;
+let billingLimitEncountered = false;
+
+function isPuterBillingModalElement(el: Element): boolean {
+  if (el.tagName.toLowerCase() === PUTER_BILLING_MODAL_TAG) {
+    return true;
+  }
+
+  const shadow = el.shadowRoot;
+  if (!shadow) {
+    return false;
+  }
+
+  const text = shadow.textContent?.toLowerCase() ?? '';
+  return PUTER_BILLING_MODAL_KEYWORDS.some((keyword) => text.includes(keyword));
+}
+
+function removePuterBillingModal(el: Element): void {
+  if (el instanceof HTMLElement) {
+    billingLimitEncountered = true;
+    el.remove();
+  }
+}
+
+export function takeBillingLimitEncountered(): boolean {
+  const seen = billingLimitEncountered;
+  billingLimitEncountered = false;
+  return seen;
+}
+
+function scanForPuterBillingModals(root: ParentNode): void {
+  if (root instanceof Element && isPuterBillingModalElement(root)) {
+    removePuterBillingModal(root);
+    return;
+  }
+
+  if ('querySelectorAll' in root) {
+    for (const el of root.querySelectorAll(PUTER_BILLING_MODAL_TAG)) {
+      removePuterBillingModal(el);
+    }
+  }
+
+  const elements =
+    root instanceof Element || root instanceof Document || root instanceof DocumentFragment ?
+      root.querySelectorAll('*')
+    : [];
+
+  for (const el of elements) {
+    if (isPuterBillingModalElement(el)) {
+      removePuterBillingModal(el);
+    }
+  }
+}
+
+export function suppressPuterBillingModals(): void {
+  if (typeof document === 'undefined' || billingModalObserverInstalled) {
+    return;
+  }
+
+  billingModalObserverInstalled = true;
+
+  const start = () => {
+    if (!document.body) {
+      return;
+    }
+
+    scanForPuterBillingModals(document.body);
+
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        for (const node of mutation.addedNodes) {
+          if (node instanceof Element) {
+            scanForPuterBillingModals(node);
+          }
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  };
+
+  if (document.body) {
+    start();
+  } else {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  }
+}
+
+export interface ParsedPuterAiError {
+  message: string;
+  isCreditError: boolean;
+}
+
+function extractPuterErrorText(err: unknown): string {
+  if (err instanceof Error) {
+    return err.message;
+  }
+  if (typeof err === 'string') {
+    return err;
+  }
+  if (err && typeof err === 'object') {
+    const obj = err as Record<string, unknown>;
+    if (typeof obj.message === 'string') {
+      return obj.message;
+    }
+    if (obj.error && typeof obj.error === 'object') {
+      const nested = obj.error as Record<string, unknown>;
+      const parts = [
+        nested.delegate,
+        nested.message,
+        nested.code,
+      ].filter((part): part is string => typeof part === 'string');
+      if (parts.length > 0) {
+        return parts.join(': ');
+      }
+    }
+    try {
+      return JSON.stringify(err);
+    } catch {
+      return String(err);
+    }
+  }
+  return String(err);
+}
+
+function isCreditRelatedError(text: string): boolean {
+  const lower = text.toLowerCase();
+  return CREDIT_ERROR_KEYWORDS.some((keyword) => lower.includes(keyword));
+}
+
+export function createCreditError(): ParsedPuterAiError {
+  return {
+    message: CREDIT_ERROR_MESSAGE,
+    isCreditError: true,
+  };
+}
+
+export function parsePuterAiError(err: unknown): ParsedPuterAiError {
+  const raw = extractPuterErrorText(err);
+
+  if (isCreditRelatedError(raw)) {
+    return createCreditError();
+  }
+
+  if (import.meta.env.DEV && raw) {
+    console.error('[CV analysis]', raw);
+  }
+
+  return {
+    message: GENERIC_ANALYSIS_ERROR,
+    isCreditError: false,
+  };
+}
+
+export function resolvePuterAiError(err: unknown): ParsedPuterAiError {
+  const parsed = parsePuterAiError(err);
+  if (parsed.isCreditError) {
+    return parsed;
+  }
+  if (takeBillingLimitEncountered()) {
+    return createCreditError();
+  }
+  return parsed;
+}
 
 export const usePuterStore = create<PuterStore>((set, get) => {
   const setError = (msg: string) => {
@@ -242,6 +443,8 @@ export const usePuterStore = create<PuterStore>((set, get) => {
   };
 
   const init = (): void => {
+    suppressPuterBillingModals();
+
     const puter = getPuter();
     if (puter) {
       set({ puterReady: true });
@@ -393,7 +596,7 @@ export const usePuterStore = create<PuterStore>((set, get) => {
       setError('Puter.js not available');
       return;
     }
-    return puter.kv.delete(key);
+    return puter.kv.del(key);
   };
 
   const listKV = async (pattern: string, returnValues?: boolean) => {
