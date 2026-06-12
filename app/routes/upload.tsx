@@ -12,6 +12,12 @@ import {
 } from '~/lib/puter';
 import { generateUUID } from '~/lib/utils';
 
+export const meta = () => [
+  { title: 'Cake®Stack | Upload' },
+  { name: 'description', content: 'Upload your CV for an ATS-style review.' },
+  { name: 'robots', content: 'noindex, nofollow' },
+];
+
 const uploadLabelClass = 'text-sm max-sm:pl-[5px]';
 
 const uploadInputClass =

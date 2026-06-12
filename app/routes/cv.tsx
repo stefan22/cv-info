@@ -46,6 +46,7 @@ export const meta = () => {
   return [
     { title: 'Cake®Stack | CV Review' },
     { name: 'description', content: 'Detailed overview of your CV' },
+    { name: 'robots', content: 'noindex, nofollow' },
   ];
 };
 

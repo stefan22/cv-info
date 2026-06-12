@@ -11,6 +11,7 @@ type StoredCv = Omit<CV, "feedback"> & {
 export const meta = () => [
   { title: "Cake®Stack | Dashboard" },
   { name: "description", content: "View and revisit your CV analyses." },
+  { name: "robots", content: "noindex, nofollow" },
 ];
 
 const Dashboard = () => {

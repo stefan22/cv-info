@@ -6,6 +6,7 @@ import { usePuterStore } from "~/lib/puter";
 export const meta = () => [
   { title: "Cake®Stack | Sign in" },
   { name: "description", content: "Sign in or create an account" },
+  { name: "robots", content: "noindex, nofollow" },
 ];
 
 type AuthMode = "signin" | "signup";
