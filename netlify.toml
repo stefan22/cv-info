@@ -1,0 +1,13 @@
+[build]
+  command = "npm run build"
+  publish = "build/client"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+# SPA fallback: serve index.html for any path that is not a physical file so the
+# client-side router can resolve routes like /dashboard and /cv/:id.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
